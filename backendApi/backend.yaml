@@ -1,0 +1,50 @@
+swagger: '2.0'
+info:
+  version: 0.0.1
+  title: SWP-DV Backend API
+  description: |
+    Preliminary API description for backend & QA
+basePath: /v1
+schemes:
+  - http
+  - https
+consumes:
+  - application/json
+produces:
+  - application/json
+paths:
+  /locationUpdate:
+    post:
+      parameters:
+        - name: Coordinates
+          in: body
+          description: An array of coordinates (location + time data)
+          schema:
+            $ref: '#/definitions/Coordinates'
+          required: true
+      responses:
+        200:
+          description: Backend collected coordinates
+
+definitions:
+  Coordinate:
+    type: object
+    properties:
+      lat:
+        type: number
+        format: double
+      lng:
+        type: number
+        format: double
+      ele:
+        type: number
+        format: double
+      timestamp:
+        type: integer
+  Coordinates:
+    type: array
+    minItems: 1
+    items:
+      $ref: '#/definitions/Coordinate'
+
+
