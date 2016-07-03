@@ -1,0 +1,46 @@
+# Backend mock
+
+start with
+
+```
+sbt run
+```
+
+when the server is up you should be able to send locationUpdates to ```http://localhost:9000/v1/locationUpdates```.
+This API endpoints accepts application/json POST requests with arrays of location objects e.g.:
+
+```
+[
+  {
+    "id": 1,
+    "lat": 0.0,         // latitude
+    "lng": 0.0,         // longitude
+    "ele": 0.0,         // elevation
+    "heading": 360,     // heading in degrees between 0 and 360
+    "timestamp": 100    // unix UTC timestamp (time in seconds since unix epoch)
+  }
+]
+```
+
+If you have ```curl``` installed on your machine you may test the service by executing the following command:
+
+```
+curl -X POST --header 'Content-Type: application/json' --header 'Accept: application/json' -d '[
+  {
+    "id": 1,
+    "lat": 0.0,
+    "lng": 0.0,
+    "ele": 0.0,
+    "heading": 360,
+    "timestamp": 100
+  }
+]' 'http://localhost:9000/v1/send'
+
+```
+
+## Limitations
+
+* The only load / delay on the server occurs when the received json is parsed & validated. We might need to
+introduce a dummy load (Calculating a complex hashing function on the input or something akin to Thread.sleep)
+* There are no ID's. In a real-world scenario (TM) we would probably use JSON web token (JWT) + OAUTH for this
+(see https://tools.ietf.org/html/rfc7519 for JWT).
