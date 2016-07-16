@@ -19,5 +19,7 @@ libraryDependencies ++= Seq(
   "com.scalawilliam" %% "xs4s" % "0.2"
 )
 
+parallelExecution in Test := false
+
 coverageMinimum := 80.0
 coverageFailOnMinimum := true

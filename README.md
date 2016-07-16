@@ -1,5 +1,26 @@
 # QA influx simulator
 
+## Known issues
+* The parser methods are not thread-safe! The exact reason for this is 
+ unknown. Any use of a parse method in parallel with another parse method
+ (even if it is two different parsers) may return corrupted data!
+ This is why the test suite is currently executed in sequential mode only.
+ However, you may execute as many INSI instances (read: INSI processes) 
+ as you like in parallel. 
+
+## Prerequisites
+
+Mandatory:
+* Java7 or higher
+* sbt
+
+Required for parsing FIT files:
+* ```gpsbabel``` available in your $PATH (on windows in your %PATH%)
+```gpsbabel``` is also required if you want to execute the test suite.
+
+For instructions on how to install ```gpsbabel``` in your operating system
+see the individual sub-folders in ```dist/```.
+
 ## Usage
 
 There are two different simulation scenarios available, which can be found in ```src/test/scala/```:
