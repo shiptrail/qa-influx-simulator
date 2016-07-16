@@ -5,13 +5,17 @@ import io.gatling.http.Predef._
 import org.scalacheck._
 import play.api.libs.json._
 
-class SendRandomClientUpdates extends Simulation {
+import scala.concurrent.duration._
+
+class SendFileBasedClientUpdates extends Simulation {
 
   implicit def jsonValToString(jsonVal: JsValue): String = jsonVal.toString()
 
   val baseUrl: String = sys.props.getOrElse("urlPrefix", "http://localhost:9000/v1")
   val numClients: Int = sys.props.getOrElse("numClients", "1").toInt
   val sendInterval: Int = sys.props.getOrElse("sendInterval", "1").toInt
+  val fileName: String = sys.props.getOrElse("fileName", "")
+  val batchSize: Int = sys.props.getOrElse("batchSize", "1").toInt
   val endPoint = baseUrl + "/send"
 
   val httpConf = http
@@ -22,33 +26,26 @@ class SendRandomClientUpdates extends Simulation {
     .userAgentHeader("Mozilla/5.0 (Macintosh; Intel Mac OS X 10.8; rv:16.0) Gecko/20100101 Firefox/16.0")
     .contentTypeHeader("application/json")
 
-  val genClientUpdate = for {
-    id <- Gen.choose[Int](0, 999999)
-    lat <- Gen.choose[Double](-90.0, 90.0)
-    lng <- Gen.choose[Double](-180.0, 180.0)
-    ele <- Gen.choose[Double](-100.0, 200.0)
-    heading <- Gen.choose[Double](0.0, 360.0)
-    timestamp <- Gen.choose[Int](0, 9999999)
-  } yield ClientUpdate(id, lat, lng, ele, heading, timestamp)
+  val clientUpdates: Seq[ClientUpdate] = GpxParser.parse(fileName).map {
+    gpxTrackPoint =>
+      ClientUpdate(1, gpxTrackPoint.lat, gpxTrackPoint.lng, gpxTrackPoint.ele, 0, gpxTrackPoint.time)
+  }.toList
 
-  val genClientUpdates = Gen.listOfN(1, genClientUpdate)
-
-  val feeder = Iterator.continually(Map("clientUpdates" -> (Json.toJson(genClientUpdates.sample.map(
-    clientUpdates => {
-      clientUpdates.head :: clientUpdates.tail.map(
-        cu => ClientUpdate(clientUpdates.head.id, cu.lat, cu.lng, cu.ele, cu.heading, cu.timestamp)
-      )
-    })
-  ))))
-
-  lazy val chain = feed(feeder)
+  lazy val chain = exec(session => {
+    session.set("currentBatch", Json.toJson(session("updates").as[Iterator[ClientUpdate]].take(batchSize).toList))
+  })
     .exec(http("request")
-      .post(endPoint).body(StringBody("${clientUpdates}")))
+      .post(endPoint).body(StringBody("${currentBatch}")))
 
 
   val scn = scenario("Send location updates")
-    .repeat(10) {
-      chain.pause(sendInterval)
+    .exec(session => {
+      val updates = clientUpdates.toIterator
+      val id = Gen.posNum[Int].sample.get
+      session.set("id", id).set("updates", updates.map( update => update.copy(id=id)))
+    })
+    .repeat(Math.ceil(clientUpdates.length / batchSize).asInstanceOf[Int]) {
+      chain.pause(sendInterval.millis)
     }
 
   setUp(scn.inject(atOnceUsers(numClients)).protocols(httpConf))
