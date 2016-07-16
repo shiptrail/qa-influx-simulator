@@ -64,7 +64,7 @@ the console as soon as the simulation has ended)
     * The number of data points in one batch (read array) is hard-coded to 10
 
 * ```SendFileBasedClientUpdates```:
-    * The only supported file type is GPX
+    * The only supported file types are GPX and TCX
     * IDs are randomly generated and may not be unique (with a low probability)
 
 ## Directory contents:
@@ -72,4 +72,3 @@ the console as soon as the simulation has ended)
 * ```mockup-server```` a play server which will serve as a mockup for the backend (See ```mockup-server/README.md``` for details)
 * ```build.sbt``` a build defintion which currently does nothing. We will use this file in the future to run tasks from the mockup-server
 as well as from the influx simulator itself.
-

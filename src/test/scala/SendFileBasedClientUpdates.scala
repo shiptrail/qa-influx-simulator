@@ -26,9 +26,9 @@ class SendFileBasedClientUpdates extends Simulation {
     .userAgentHeader("Mozilla/5.0 (Macintosh; Intel Mac OS X 10.8; rv:16.0) Gecko/20100101 Firefox/16.0")
     .contentTypeHeader("application/json")
 
-  val clientUpdates: Seq[ClientUpdate] = GpxParser.parse(fileName).map {
-    gpxTrackPoint =>
-      ClientUpdate(1, gpxTrackPoint.lat, gpxTrackPoint.lng, gpxTrackPoint.ele, 0, gpxTrackPoint.time)
+  val clientUpdates: Seq[ClientUpdate] = MultiFormatParser.parse(fileName).map {
+    trackPoint =>
+      ClientUpdate(1, trackPoint.lat, trackPoint.lng, trackPoint.ele, 0, trackPoint.time)
   }.toList
 
   lazy val chain = exec(session => {

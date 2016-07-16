@@ -64,27 +64,27 @@ class GpxParserSpec extends FlatSpec with Matchers {
     """.stripMargin
 
   val expectedResults = List(
-    GpxTrackPoint(52.508182134479284, 13.209660965949297, 20.399999618530273, 1378123000),
-    GpxTrackPoint(52.508178278803825, 13.209655852988362, 24.0, 1378123001),
-    GpxTrackPoint(52.50816285610199, 13.209633054211736, 24.0, 1378123007)
+    TrackPoint(52.508182134479284, 13.209660965949297, 20.399999618530273, 1378123000),
+    TrackPoint(52.508178278803825, 13.209655852988362, 24.0, 1378123001),
+    TrackPoint(52.50816285610199, 13.209633054211736, 24.0, 1378123007)
   )
 
   val expectedResultsSwimmingFile = List(
-    GpxTrackPoint(52.509451,13.209473,36.0,1374327451),
-    GpxTrackPoint(52.509423,13.209413,36.0,1374327483),
-    GpxTrackPoint(52.509328,13.209443,35.4,1374328749),
-    GpxTrackPoint(52.509415,13.209395,34.9,1374328786)
+    TrackPoint(52.509451,13.209473,36.0,1374327451),
+    TrackPoint(52.509423,13.209413,36.0,1374327483),
+    TrackPoint(52.509328,13.209443,35.4,1374328749),
+    TrackPoint(52.509415,13.209395,34.9,1374328786)
   )
 
   def commonMinimal =
     new {
-      val gpxTrackPoints: Iterator[GpxTrackPoint] = GpxParser.parse(new ByteArrayInputStream(minimalGpxFile.getBytes()))
+      val gpxTrackPoints: Iterator[TrackPoint] = GpxParser.parse(new ByteArrayInputStream(minimalGpxFile.getBytes()))
     }
 
-  def commonSwimming: Iterator[GpxTrackPoint] = GpxParser.parse(new ByteArrayInputStream(swimmingGpxFile.getBytes()))
+  def commonSwimming: Iterator[TrackPoint] = GpxParser.parse(new ByteArrayInputStream(swimmingGpxFile.getBytes()))
 
 
-  "A parsed minimal gpx file with three trkpt elements" should "contain three GpxTrackPoint objects" in {
+  "A parsed minimal gpx file with three trkpt elements" should "contain three TrackPoint objects" in {
     val gpxTrackPoints = commonMinimal.gpxTrackPoints
     gpxTrackPoints.toList.length should be(3)
   }
