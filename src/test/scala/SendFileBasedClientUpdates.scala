@@ -1,4 +1,4 @@
-import clientupdates.{ClientUpdate, GpxParser}
+import clientupdates._
 import io.gatling.core.Predef._
 import io.gatling.http.Predef._
 import org.scalacheck._
@@ -22,9 +22,9 @@ class SendFileBasedClientUpdates extends Simulation {
     .baseURL(baseUrl) // Here is the root for all relative URLs
     .contentTypeHeader("application/json")
 
-  val clientUpdates: Seq[ClientUpdate] = GpxParser.parse(fileName).map {
-    gpxTrackPoint =>
-      ClientUpdate(1, gpxTrackPoint.lat, gpxTrackPoint.lng, gpxTrackPoint.ele, 0, gpxTrackPoint.time)
+  val clientUpdates: Seq[ClientUpdate] = MultiFormatParser.parse(fileName).map {
+    trackPoint =>
+      ClientUpdate(1, trackPoint.lat, trackPoint.lng, trackPoint.ele, 0, trackPoint.time)
   }.toList
 
   lazy val chain = exec(session => {

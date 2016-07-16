@@ -12,7 +12,7 @@ valid in terms of the data schema but nonsensical for the application).
 
 ### ```SendRandomClientUpdates```
 
-The sbt task ```gatling:testOnly clientupdates.SendRandomClientUpdates``` takes three Parameters:
+The sbt task ```gatling:testOnly SendRandomClientUpdates``` takes three Parameters:
 
 * ```urlPrefix``` a url (e.g. ```http://localhost:9000/v1```)
 * ```numClients``` the number of concurrent clients (aka. sailing boats) to be simulated
@@ -36,7 +36,8 @@ The sbt task ```gatling:testOnly SendFileBasedClientUpdates``` takes five Parame
 * ```numClients``` the number of concurrent clients (aka. sailing boats) to be simulated
 * ```sendDelay``` the number of milli-seconds clients wait between sending new data
 * ```batchSize``` the number of clientUpdates to send in one REST request to the backend
-* ```fileName``` a path to a file to be parsed (e.g.: ../fe-prototype/tracks/346181868.gpx)
+* ```fileName``` a path to a file to be parsed (e.g.: ../fe-prototype/tracks/346181868.gpx).
+May be one of the supported file types (see section: current limitations).
 
 The Parameters may be set in the ```JAVA_OPTS``` environment variable. This can be done
 either system-wide (refer to you OS documentation for details), inside of your IDE (usually
@@ -64,7 +65,7 @@ the console as soon as the simulation has ended)
     * The number of data points in one batch (read array) is hard-coded to 10
 
 * ```SendFileBasedClientUpdates```:
-    * The only supported file type is GPX
+    * The only supported file types are GPX and TCX
     * IDs are randomly generated and may not be unique (with a low probability)
 
 ## Directory contents:
