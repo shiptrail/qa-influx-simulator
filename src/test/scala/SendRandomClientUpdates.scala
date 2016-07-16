@@ -1,22 +1,17 @@
-package clientupdates
-
+import clientupdates.ClientUpdate
 import io.gatling.core.Predef._
 import io.gatling.http.Predef._
 import org.scalacheck._
 import play.api.libs.json._
-
-import scala.util.Try
+import scala.language.implicitConversions
 
 class SendRandomClientUpdates extends Simulation {
 
   implicit def jsonValToString(jsonVal: JsValue): String = jsonVal.toString()
 
-  val baseUrl: String = Try {
-    System.getProperty("urlPrefix")
-  } getOrElse ("http://localhost:9000/v1")
-  val numClients: Int = Integer.getInteger("numClients", 1).toInt
-  val sendInterval: Int = Integer.getInteger("sendInterval", 1).toInt
-
+  val baseUrl: String = sys.props.getOrElse("urlPrefix", "http://localhost:9000/v1")
+  val numClients: Int = sys.props.getOrElse("numClients", "1").toInt
+  val sendInterval: Int = sys.props.getOrElse("sendInterval", "1").toInt
   val endPoint = baseUrl + "/send"
 
   val httpConf = http
