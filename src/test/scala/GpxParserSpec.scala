@@ -77,23 +77,23 @@ class GpxParserSpec extends FlatSpec with Matchers {
     TrackPoint(52.509415,13.209395,34.9,1374328786)
   )
 
-  def commonMinimal: Iterator[TrackPoint] = GpxParser.parse(new ByteArrayInputStream(minimalGpxFile.getBytes()))
+  def commonMinimal: List[TrackPoint] = GpxParser.parse(new ByteArrayInputStream(minimalGpxFile.getBytes())).toList
 
-  def commonSwimming: Iterator[TrackPoint] = GpxParser.parse(new ByteArrayInputStream(swimmingGpxFile.getBytes()))
+  def commonSwimming: List[TrackPoint] = GpxParser.parse(new ByteArrayInputStream(swimmingGpxFile.getBytes())).toList
 
 
   "A parsed minimal gpx file with three trkpt elements" should "contain three TrackPoint objects" in {
     val gpxTrackPoints = commonMinimal
-    gpxTrackPoints.toList.length should be(3)
+    gpxTrackPoints.length should be(3)
   }
 
   it should "be equal to three expected results" in {
     val gpxTrackPoints = commonMinimal
-    gpxTrackPoints.toList should be(expectedResults)
+    gpxTrackPoints should be(expectedResults)
   }
 
   "A swimming file with three elements" should "parse correctly" in {
     val gpxTrackPoint = commonSwimming
-    gpxTrackPoint.toList should be(expectedResultsSwimmingFile)
+    gpxTrackPoint should be(expectedResultsSwimmingFile)
   }
 }
