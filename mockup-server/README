@@ -42,5 +42,3 @@ curl -X POST --header 'Content-Type: application/json' --header 'Accept: applica
 
 * The only load / delay on the server occurs when the received json is parsed & validated. We might need to
 introduce a dummy load (Calculating a complex hashing function on the input or something akin to Thread.sleep)
-* There are no ID's. In a real-world scenario (TM) we would probably use JSON web token (JWT) + OAUTH for this
-(see https://tools.ietf.org/html/rfc7519 for JWT).
