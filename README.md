@@ -35,9 +35,10 @@ valid in terms of the data schema but nonsensical for the application).
 
 The sbt task ```gatling:testOnly SendRandomClientUpdates``` takes three Parameters:
 
-* ```urlPrefix``` a url (e.g. ```http://localhost:9000/v1```)
+* ```urlPrefix``` a url (e.g. ```http://localhost:9000/v2```)
 * ```numClients``` the number of concurrent clients (aka. sailing boats) to be simulated
-* ```sendDelay``` the number of seconds clients wait between sending new data
+* ```sendDelay``` the number of milli-seconds clients wait between sending new data
+* ```batchSize``` the number of clientUpdates to send in one REST request to the backend
 
 The Parameters may be set in the ```JAVA_OPTS``` environment variable. This can be done
 either system-wide (refer to you OS documentation for details), inside of your IDE (usually
@@ -45,7 +46,7 @@ you can edit your run / debug configuration) or (if you use a decent operating s
 in a shell as follows:
 
 ```
-$ JAVA_OPTS="-DurlPrefix=http://localhost:9000/v1 -DnumClients=50 -DsendDelay=1" \
+$ JAVA_OPTS="-DurlPrefix=http://localhost:9000/v2 -DnumClients=50 -DsendDelay=1 -DbatchSize=1" \
 sbt "gatling:testOnly SendRandomClientUpdates"
 ```
 
@@ -53,7 +54,7 @@ sbt "gatling:testOnly SendRandomClientUpdates"
 
 The sbt task ```gatling:testOnly SendFileBasedClientUpdates``` takes five Parameters:
 
-* ```urlPrefix``` a url (e.g. ```http://localhost:9000/v1```)
+* ```urlPrefix``` a url (e.g. ```http://localhost:9000/v2```)
 * ```numClients``` the number of concurrent clients (aka. sailing boats) to be simulated
 * ```sendDelay``` the number of milli-seconds clients wait between sending new data
 * ```batchSize``` the number of clientUpdates to send in one REST request to the backend
@@ -66,7 +67,7 @@ you can edit your run / debug configuration) or (if you use a decent operating s
 in a shell as follows:
 
 ```
-$ JAVA_OPTS="-DurlPrefix=http://localhost:9000/v1 -DnumClients=5 -DsendInterval=10 -DbatchSize=1 -DfileName=../fe-prototype/tracks/346181868.gpx" \
+$ JAVA_OPTS="-DurlPrefix=http://localhost:9000/v2 -DnumClients=5 -DsendInterval=10 -DbatchSize=1 -DfileName=../fe-prototype/tracks/346181868.gpx" \
 sbt "gatling:testOnly SendFileBasedClientUpdates"
 ```
 
@@ -86,12 +87,11 @@ the console as soon as the simulation has ended)
     * The number of data points in one batch (read array) is hard-coded to 10
 
 * ```SendFileBasedClientUpdates```:
-    * The only supported file types are GPX and TCX
+    * The only supported file types are GPX, TCX and FIT
     * IDs are randomly generated and may not be unique (with a very low probability)
 
 ## Directory contents:
 
-* ```mockup-server``` a play server which will serve as a mockup for the backend (See ```mockup-server/README.md``` for details)
 * ```build.sbt``` a build definition which currently does nothing. We will use this file in the future to run tasks from the mockup-server
 as well as from the influx simulator itself.
 

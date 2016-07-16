@@ -1,7 +1,8 @@
+import java.util.UUID
+
 import clientupdates._
 import io.gatling.core.Predef._
 import io.gatling.http.Predef._
-import org.scalacheck._
 import play.api.libs.json._
 
 import scala.concurrent.duration._
@@ -11,12 +12,12 @@ class SendFileBasedClientUpdates extends Simulation {
 
   implicit def jsonValToString(jsonVal: JsValue): String = jsonVal.toString()
 
-  val baseUrl: String = sys.props.getOrElse("urlPrefix", "http://localhost:9000/v1")
+  val baseUrl: String = sys.props.getOrElse("urlPrefix", "http://localhost:9000/v2")
   val numClients: Int = sys.props.getOrElse("numClients", "1").toInt
   val sendInterval: Duration = sys.props.getOrElse("sendInterval", "1").toInt.millis
   val fileName: String = sys.props.getOrElse("fileName", "")
   val batchSize: Int = sys.props.getOrElse("batchSize", "1").toInt
-  val endPoint = baseUrl + "/send"
+  val endPoint = "send"
 
   val httpConf = http
     .baseURL(baseUrl) // Here is the root for all relative URLs
@@ -24,20 +25,23 @@ class SendFileBasedClientUpdates extends Simulation {
 
   val clientUpdates: Seq[ClientUpdate] = MultiFormatParser.parse(fileName).map {
     trackPoint =>
-      ClientUpdate(1, trackPoint.lat, trackPoint.lng, trackPoint.ele, 0, trackPoint.time)
+      ClientUpdate(trackPoint.lat, trackPoint.lng, trackPoint.ele, 0, trackPoint.time)
   }.toList
 
   lazy val chain = exec(session => {
     session.set("currentBatch", Json.toJson(session("updates").as[Iterator[ClientUpdate]].take(batchSize).toList))
   })
     .exec(http("request")
-      .post(endPoint).body(StringBody("${currentBatch}")))
+      .post("${endPointWithId}").body(StringBody("${currentBatch}")))
 
   val scn = scenario("Send location updates")
     .exec(session => {
-      val id = Gen.posNum[Int].sample.get
-      val updates = clientUpdates.toIterator.map( update => update.copy(id=id))
-      session.set("id", id).set("updates", updates)
+      val id = UUID.randomUUID()
+      val updates = clientUpdates.toIterator
+      session
+        .set("id", id)
+        .set("endPointWithId", s"$baseUrl/$id/$endPoint")
+        .set("updates", updates)
     })
     .repeat(Math.ceil(clientUpdates.length.toDouble / batchSize).toInt) {
       chain.pause(sendInterval)
