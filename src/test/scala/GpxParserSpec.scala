@@ -1,10 +1,7 @@
 import java.io.ByteArrayInputStream
 
-import clientupdates.GpxParser
+import clientupdates.{GpxParser, _}
 import org.scalatest._
-import clientupdates._
-
-import scala.language.reflectiveCalls
 
 class GpxParserSpec extends FlatSpec with Matchers {
 
