@@ -2,13 +2,14 @@ package clientupdates
 
 object MultiFormatParser {
   def parse(fileName: String): Iterator[TrackPoint] = {
-    val gpxFileExtension = ".gpx"
-    val tcxFileExtension = ".tcx"
+    val parserForExtension = Map(
+      "gpx" -> GpxParser,
+      "tcx" -> TcxParser,
+      "fit" -> FitParser
+    )
 
-    fileName match {
-      case fileName if fileName.endsWith(gpxFileExtension) => GpxParser.parse(fileName)
-      case fileName if fileName.endsWith(tcxFileExtension) => TcxParser.parse(fileName)
-      case _ => throw new Exception("Unsupported file type!")
-    }
+    val fileExtension = fileName.split(".").last
+    val parser = parserForExtension.getOrElse(fileExtension, throw new Exception("Unsupported file type!"))
+    parser.parse(fileName)
   }
 }
