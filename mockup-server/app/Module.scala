@@ -15,6 +15,8 @@ import services.{ApplicationTimer, AtomicCounter, Counter}
  */
 class Module extends AbstractModule {
 
+  // the Guice-DSL use something like the builder patter and doesn't return Unit
+  @SuppressWarnings(Array("org.wartremover.warts.NonUnitStatements"))
   override def configure() = {
     // Use the system clock as the default implementation of Clock
     bind(classOf[Clock]).toInstance(Clock.systemDefaultZone)
