@@ -34,7 +34,14 @@ is sent at once by a client the used id is the same across all data points)
 
 ## Directory contents:
 
-* ```mockup-server```` a play server which will serve as a mockup for the backend (See ```mockup-server/README.md``` for details)
-* ```build.sbt``` a build defintion which currently does nothing. We will use this file in the future to run tasks from the mockup-server
+* ```mockup-server``` a play server which will serve as a mockup for the backend (See ```mockup-server/README.md``` for details)
+* ```build.sbt``` a build definition which currently does nothing. We will use this file in the future to run tasks from the mockup-server
 as well as from the influx simulator itself.
 
+# Development
+
+Run tests: ```$ sbt test```
+
+Create test coverage report: ```$ sbt coverage test coverageReport```. (Will fail if the coverage is to low or some
+tests fails) The generated HTML report is available under target/scala-2.11/scoverage-report/index.html (also mentioned
+in the console output)
