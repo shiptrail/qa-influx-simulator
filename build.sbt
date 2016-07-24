@@ -16,3 +16,5 @@ libraryDependencies += "com.typesafe.play" %% "play-json" % "2.5.4"
 libraryDependencies += "com.typesafe.play" %% "play-functional" % "2.5.4"
 libraryDependencies += "org.scalacheck" %% "scalacheck" % "1.13.0"
 
+coverageMinimum := 80.0
+coverageFailOnMinimum := true
