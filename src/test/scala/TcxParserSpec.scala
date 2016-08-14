@@ -76,7 +76,7 @@ class TcxParserSpec extends FlatSpec with Matchers {
       |</TrainingCenterDatabase>
       |""".stripMargin
 
-  def commonTcx: Iterator[TrackPoint] = TcxParser.parse(new ByteArrayInputStream(minimalTcxFile.getBytes()))
+  def commonTcx: List[TrackPoint] = TcxParser.parse(new ByteArrayInputStream(minimalTcxFile.getBytes())).toList
 
   val expectedResultsminimalTcx = List(
     TrackPoint(52.508397717028856,13.210077797994018,36.599998474121094,1348463550),
@@ -86,11 +86,11 @@ class TcxParserSpec extends FlatSpec with Matchers {
 
   "A parsed minimal tcx file with three Trackpoint elements" should "contain three TrackPoint objects" in {
     val trackPoints = commonTcx
-    trackPoints.toList.length should be(3)
+    trackPoints should have length 3
   }
 
   it should "contain the expected TrackPoints" in {
     val trackPoints = commonTcx
-    trackPoints.toList should be(expectedResultsminimalTcx)
+    trackPoints should be(expectedResultsminimalTcx)
   }
 }
