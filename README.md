@@ -50,6 +50,8 @@ $ JAVA_OPTS="-DurlPrefix=http://localhost:9000/v2 -DnumClients=50 -DsendDelay=1 
 sbt "gatling:testOnly SendRandomClientUpdates"
 ```
 
+For Windows, use the Bat-File ```sendRandomClientUpdates.bat```
+
 ### ```SendFileBasedClientUpdates```
 
 The sbt task ```gatling:testOnly SendFileBasedClientUpdates``` takes five Parameters:
@@ -70,6 +72,8 @@ in a shell as follows:
 $ JAVA_OPTS="-DurlPrefix=http://localhost:9000/v2 -DnumClients=5 -DsendInterval=10 -DbatchSize=1 -DfileName=../fe-prototype/tracks/346181868.gpx" \
 sbt "gatling:testOnly SendFileBasedClientUpdates"
 ```
+
+For Windows, use the Bat-File ```sendFileBasedClientUpdates.bat```, but check the -DfileName Parameter first. 
 
 ## Output
 
