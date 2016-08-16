@@ -11,8 +11,19 @@ object FitParser extends GpsTrackParser {
   }
 
   def parse(url: URL): Iterator[TrackPoint] = {
-    val gpsBabelOutPut: String = (url #> "gpsbabel -i garmin_fit -f - -o gpx -F -").!!.trim()
-    parse(new ByteArrayInputStream(gpsBabelOutPut.getBytes()))
+    try {
+      val gpsBabelOutPut: String = (url #> "gpsbabel -i garmin_fit -f - -o gpx -F -").!!.trim()
+      parse(new ByteArrayInputStream(gpsBabelOutPut.getBytes()))
+    } catch {
+      case _: RuntimeException => {
+        stderr.println("WARNING: Couldn't find gpsbabel in your path!")
+        Iterator.empty
+      }
+      case _: Throwable => {
+        stderr.println("WARNING: Unknown error whilst calling gpsbabel in your path!")
+        Iterator.empty
+      }
+    }
   }
 
   override def parse(is: InputStream): Iterator[TrackPoint] = {
