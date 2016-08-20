@@ -1,6 +1,7 @@
+package clientupdates
+
 import java.io.ByteArrayInputStream
 
-import clientupdates.{TcxParser, TrackPoint}
 import org.scalatest.{FlatSpec, Matchers}
 
 /**

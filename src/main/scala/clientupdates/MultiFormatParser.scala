@@ -8,12 +8,17 @@ object MultiFormatParser {
   )
 
   def parse(fileName: String): Iterator[TrackPoint] = {
-    val parser = parserForFileName(fileName)
-    parser.parse(fileName)
+    parserForFileName(fileName) match {
+      case Some(parserForFile) => parserForFile.parse(fileName)
+      case None => {
+        System.err.println("Error: Unsupported file type!")
+        Iterator.empty
+      }
+    }
   }
 
-  def parserForFileName(fileName: String): GpsTrackParser = {
+  def parserForFileName(fileName: String): Option[GpsTrackParser] = {
     val fileExtension = fileName.split('.').last
-    parserForExtension.getOrElse(fileExtension, throw new Exception("Unsupported file type!"))
+    parserForExtension.get(fileExtension)
   }
 }

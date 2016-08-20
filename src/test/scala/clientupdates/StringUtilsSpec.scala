@@ -1,3 +1,5 @@
+package clientupdates
+
 import clientupdates.StringUtils._
 import org.scalatest.{FlatSpec, Matchers}
 
