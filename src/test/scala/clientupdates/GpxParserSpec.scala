@@ -1,6 +1,7 @@
+package clientupdates
+
 import java.io.ByteArrayInputStream
 
-import clientupdates.{GpxParser, _}
 import org.scalatest._
 
 class GpxParserSpec extends FlatSpec with Matchers {
@@ -69,6 +70,7 @@ class GpxParserSpec extends FlatSpec with Matchers {
 
   val expectedResultsSwimmingFile = List(
     TrackPoint(52.509451,13.209473,36.0,1374327451),
+
     TrackPoint(52.509423,13.209413,36.0,1374327483),
     TrackPoint(52.509328,13.209443,35.4,1374328749),
     TrackPoint(52.509415,13.209395,34.9,1374328786)
