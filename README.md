@@ -23,57 +23,13 @@ see the individual sub-folders in ```dist/```.
 
 ## Usage
 
-There are two different simulation scenarios available, which can be found in ```src/test/scala/```:
+After installation (see below Building Packages) a executable `insi` is available.
 
-* ```SendRandomClientUpdates```: generates pseudo random client updates (but adheres to the expected basic data scheme;
-e.g.: a lat property will always be a Double between -90.0 and +90.0 etc.). This is useful only for pure stress testing.
-It might also be useful for smoke testing the backend (e.g. testing its resilience if being flooded with data which is
-valid in terms of the data schema but nonsensical for the application).
-* ```SendFileBasedClientUpdates```: generates client updates by parsing a recorded gps track file.
+To execute the same task with sbt without packaging and installing the executable use `sbt run`.
+E.g. `sbt "run -c 50 --batch-size 1 track.gpx"` instate of `insi -c 50 --batch-size 1 tack.gpx`.
+The quotation marks are important for sbt.
 
-### ```SendRandomClientUpdates```
-
-The sbt task ```gatling:testOnly SendRandomClientUpdates``` takes three Parameters:
-
-* ```urlPrefix``` a url (e.g. ```http://localhost:9000/v2```)
-* ```numClients``` the number of concurrent clients (aka. sailing boats) to be simulated
-* ```sendDelay``` the number of milli-seconds clients wait between sending new data
-* ```batchSize``` the number of clientUpdates to send in one REST request to the backend
-
-The Parameters may be set in the ```JAVA_OPTS``` environment variable. This can be done
-either system-wide (refer to you OS documentation for details), inside of your IDE (usually
-you can edit your run / debug configuration) or (if you use a decent operating systems)
-in a shell as follows:
-
-```
-$ JAVA_OPTS="-DurlPrefix=http://localhost:9000/v2 -DnumClients=50 -DsendDelay=1 -DbatchSize=1" \
-sbt "gatling:testOnly SendRandomClientUpdates"
-```
-
-For Windows, use the Bat-File ```sendRandomClientUpdates.bat```
-
-### ```SendFileBasedClientUpdates```
-
-The sbt task ```gatling:testOnly SendFileBasedClientUpdates``` takes five Parameters:
-
-* ```urlPrefix``` a url (e.g. ```http://localhost:9000/v2```)
-* ```numClients``` the number of concurrent clients (aka. sailing boats) to be simulated
-* ```sendDelay``` the number of milli-seconds clients wait between sending new data
-* ```batchSize``` the number of clientUpdates to send in one REST request to the backend
-* ```fileName``` a path to a file to be parsed (e.g.: ../fe-prototype/tracks/346181868.gpx).
-May be one of the supported file types (see section: current limitations).
-
-The Parameters may be set in the ```JAVA_OPTS``` environment variable. This can be done
-either system-wide (refer to you OS documentation for details), inside of your IDE (usually
-you can edit your run / debug configuration) or (if you use a decent operating systems)
-in a shell as follows:
-
-```
-$ JAVA_OPTS="-DurlPrefix=http://localhost:9000/v2 -DnumClients=5 -DsendInterval=10 -DbatchSize=1 -DfileName=../fe-prototype/tracks/346181868.gpx" \
-sbt "gatling:testOnly SendFileBasedClientUpdates"
-```
-
-For Windows, use the Bat-File ```sendFileBasedClientUpdates.bat```, but check the -DfileName Parameter first. 
+Use `insi --help` or `sbt "run --help"` to see all available options.
 
 ## Output
 
@@ -84,20 +40,15 @@ the console as soon as the simulation has ended)
 
 ## Current limitations
 
-* ```SendRandomClientUpdates```:
+* ```simulations.SendRandomClientUpdates```:
     * The data sent by simulated clients is mostly random (the data adheres to basic rules; if a batch of data
     is sent at once by a client the used id is the same across all data points)
     * Every time a client sends a batch of data it uses a new id
     * The number of data points in one batch (read array) is hard-coded to 10
 
-* ```SendFileBasedClientUpdates```:
+* ```simulations.SendFileBasedClientUpdates```:
     * The only supported file types are GPX, TCX and FIT
     * IDs are randomly generated and may not be unique (with a very low probability)
-
-## Directory contents:
-
-* ```build.sbt``` a build definition which currently does nothing. We will use this file in the future to run tasks from the mockup-server
-as well as from the influx simulator itself.
 
 # Development
 
@@ -106,3 +57,46 @@ Run tests: ```$ sbt test```
 Create test coverage report: ```$ sbt coverage test coverageReport```. (Will fail if the coverage is to low or some
 tests fails) The generated HTML report is available under target/scala-2.11/scoverage-report/index.html (also mentioned
 in the console output)
+
+# Building packages
+
+Insi can be run like a regular command line application without sbt like:
+
+```
+$ insi ../foobar.fit
+```
+ 
+In order to accomplish this you may generate debian, rpm or zip packages and
+install these packages on your system.
+
+## Debian packages
+
+Execute:
+
+```$ sbt clean debian:package-bin```
+
+Afterwards a deb file is located in the ```target``` directory.
+
+## Rpm packages
+
+IMPORTANT: you need ```rpm``` and ```rpmbuild``` in your path in order
+to build rpm packages.
+
+Execute:
+
+```$ sbt clean rpm:package-bin```
+
+Afterwards a rpm file is located in the ```target/rpm/RPMS/noarch``` 
+directory.
+
+## Zip packages
+
+Execute:
+
+```$ sbt clean universal:package-bin```
+
+Afterwards a zip file is located in the ```target/universal``` 
+directory.
+
+You may unpack the generated zip file and add the contained ```bin``` 
+directory to your ```$PATH``` (or ```%PATH%``` on windows)

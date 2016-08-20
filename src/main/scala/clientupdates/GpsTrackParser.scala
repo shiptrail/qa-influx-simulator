@@ -1,12 +1,10 @@
 package clientupdates
 
-import java.io.{FileInputStream, InputStream}
+import java.io.{File, FileInputStream, InputStream}
 
 trait GpsTrackParser {
-  def parse(fileName: String): Iterator[TrackPoint] = {
-    val fileInputStream = new FileInputStream(fileName)
-    parse(fileInputStream)
-  }
+  def parse(fileName: File): Iterator[TrackPoint] =
+    parse(new FileInputStream(fileName))
 
   def parse(inputStream: InputStream): Iterator[TrackPoint]
 }
