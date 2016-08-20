@@ -2,21 +2,25 @@ import clientupdates.{FitParser, GpxParser, MultiFormatParser, TcxParser}
 import org.scalatest.{FlatSpec, Matchers}
 
 class MultiFormatParserSpec extends FlatSpec with Matchers {
-  "MultiFormatParser" should "be able to determine the correct parser type" in {
+  "parserForFileName" should "be able to determine the correct parser type" in {
     val gpxFileName = "foobar.gpx"
     val tcxFileName = "foobar.tcx"
     val fitFileName = "foobar.fit"
 
-    MultiFormatParser.parserForFileName(gpxFileName) should be(GpxParser)
-    MultiFormatParser.parserForFileName(tcxFileName) should be(TcxParser)
-    MultiFormatParser.parserForFileName(fitFileName) should be(FitParser)
+    MultiFormatParser.parserForFileName(gpxFileName) should be(Some(GpxParser))
+    MultiFormatParser.parserForFileName(tcxFileName) should be(Some(TcxParser))
+    MultiFormatParser.parserForFileName(fitFileName) should be(Some(FitParser))
   }
 
-  "MultiFormatParser" should "throw an exception for an unknown file type" in {
+  "parserForFileName" should "return None for an unknown file extension" in {
     val unknownFileExtension = "foobar.foobar"
 
-    intercept[Exception] {
-      MultiFormatParser.parserForExtension(unknownFileExtension)
-    }
+    MultiFormatParser.parserForFileName(unknownFileExtension) should be(None)
+  }
+
+  "parse" should "return an empty iterator for an unknown file extension" in {
+    val unknownFileExtension = "foobar.foobar"
+
+    MultiFormatParser.parse(unknownFileExtension) should be(Iterator.empty)
   }
 }

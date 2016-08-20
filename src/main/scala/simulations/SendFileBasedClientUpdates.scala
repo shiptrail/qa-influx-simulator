@@ -1,3 +1,5 @@
+package simulations
+
 import java.util.UUID
 
 import clientupdates._
