@@ -1,4 +1,5 @@
-import clientupdates._
+package clientupdates
+
 import org.scalatest.{FlatSpec, Matchers}
 
 class XmlBasedParserSpec extends FlatSpec with Matchers with XmlBasedParser {

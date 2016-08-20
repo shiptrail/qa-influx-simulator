@@ -15,12 +15,8 @@ object FitParser extends GpsTrackParser {
       val gpsBabelOutPut: String = (url #> "gpsbabel -i garmin_fit -f - -o gpx -F -").!!.trim()
       parse(new ByteArrayInputStream(gpsBabelOutPut.getBytes()))
     } catch {
-      case _: RuntimeException => {
-        stderr.println("WARNING: Couldn't find gpsbabel in your path!")
-        Iterator.empty
-      }
       case _: Throwable => {
-        stderr.println("WARNING: Unknown error whilst calling gpsbabel in your path!")
+        System.err.println("""WARNING: Couldn't find gpsbabel in your path or unknown error whilst calling gpsbabel in your path!""")
         Iterator.empty
       }
     }
