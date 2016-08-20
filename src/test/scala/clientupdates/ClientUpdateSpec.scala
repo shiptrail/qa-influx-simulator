@@ -1,4 +1,5 @@
-import clientupdates._
+package clientupdates
+
 import org.scalatest._
 import play.api.libs.json.Json
 
