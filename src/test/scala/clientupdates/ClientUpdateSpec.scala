@@ -4,14 +4,15 @@ import org.scalatest._
 import play.api.libs.json.Json
 
 class ClientUpdateSpec extends FlatSpec with Matchers {
-  val caseClass = ClientUpdate(42.0, 42.0, 42.0, 42.0, 42)
+  val caseClass = ClientUpdate(42.0, 42.0, 42.0, 42.0, 42, Seq.empty)
 
   val json = Json.obj(
     "lat" -> 42.0,
     "lng" -> 42.0,
     "ele" -> 42.0,
     "heading" -> 42.0,
-    "timestamp" -> 42
+    "timestamp" -> 42,
+    "accelerometer" -> Json.arr()
   )
 
   "ClientUpdate" should "be able to transform a ClientUpdate case class into a clientUpdate JSON object " in {

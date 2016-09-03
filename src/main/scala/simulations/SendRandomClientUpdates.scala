@@ -12,7 +12,7 @@ class SendRandomClientUpdates(conf: Conf)
         ele <- Gen.choose[Double](-100.0, 200.0)
         heading <- Gen.choose[Double](0.0, 360.0)
         timestamp <- Gen.choose[Int](0, 9999999)
-      } yield ClientUpdate(lat, lng, ele, heading, timestamp)
+      } yield ClientUpdate(lat, lng, ele, heading, timestamp, Seq.empty)
 
       lazy val clientUpdates: List[ClientUpdate] =
         Gen.listOfN(randomTrackListLength, genClientUpdate).sample.get

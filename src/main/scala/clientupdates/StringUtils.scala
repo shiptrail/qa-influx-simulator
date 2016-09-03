@@ -21,4 +21,7 @@ object StringUtils {
 
   def toDouble(str: String): Option[Double] =
     Try { str.toDouble }.toOption
+
+  def toInt(str: String): Option[Int] =
+    Try { str.toInt }.toOption
 }
