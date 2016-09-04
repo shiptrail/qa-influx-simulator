@@ -8,12 +8,14 @@ class SendFileBasedClientUpdates(conf: Conf)
     MultiFormatParser
       .parse(conf.file())
       .map { trackPoint =>
-        ClientUpdate(trackPoint.lat,
+        TrackPoint(trackPoint.lat,
           trackPoint.lng,
+          trackPoint.timestamp,
           trackPoint.ele,
-          0,
-          trackPoint.time,
-          trackPoint.accelerometer)
+          trackPoint.gpsMeta,
+          trackPoint.compass,
+          trackPoint.accelerometer,
+          trackPoint.orientation)
       }
       .toList
   })

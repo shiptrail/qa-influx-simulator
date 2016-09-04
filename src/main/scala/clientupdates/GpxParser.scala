@@ -2,24 +2,13 @@ package clientupdates
 
 import java.io.InputStream
 
+import clientupdates.TrackPoint.Accelerometer
+
 import scala.language.implicitConversions
-import scala.xml.{Elem, NodeSeq}
 
 object GpxParser extends GpsTrackParser with XmlBasedParser {
   def parse(is: InputStream): Iterator[TrackPoint] = {
-    class ChildSelectable(ns: NodeSeq) {
-      def \* = ns flatMap {
-        _ match {
-          case e: Elem => e.child
-          case _ => NodeSeq.Empty
-        }
-      }
-    }
-
-    implicit def nodeSeqIsChildSelectable(xml: NodeSeq) = new ChildSelectable(xml)
-
     val nodes = getElementsWithNameFromInputStream("trkpt", is)
-    //println(nodes.toList)
 
     for {
       xmlNode <- nodes
@@ -37,6 +26,6 @@ object GpxParser extends GpsTrackParser with XmlBasedParser {
             offset <- whenDefined(accelEntry \ "@offset").flatMap(StringUtils.toInt)
           } yield Accelerometer(x, y, z, offset)
         }
-    } yield TrackPoint(lat, lng, ele, time, accelerometer)
+    } yield TrackPoint(lat, lng, time, Some(ele), accelerometer = accelerometer)
   }
 }

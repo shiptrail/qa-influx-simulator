@@ -2,6 +2,7 @@ package clientupdates
 
 import java.io.ByteArrayInputStream
 
+import clientupdates.TrackPoint.Accelerometer
 import org.scalatest._
 
 class GpxParserSpec extends FlatSpec with Matchers {
@@ -161,38 +162,38 @@ class GpxParserSpec extends FlatSpec with Matchers {
     """.stripMargin
 
   val expectedResults = List(
-    TrackPoint(52.508182134479284, 13.209660965949297, 20.399999618530273, 1378123000, Seq.empty),
-    TrackPoint(52.508178278803825, 13.209655852988362, 24.0, 1378123001, Seq.empty),
-    TrackPoint(52.50816285610199, 13.209633054211736, 24.0, 1378123007, Seq.empty)
+    TrackPoint(52.508182134479284, 13.209660965949297, 1378123000, Some(20.399999618530273)),
+    TrackPoint(52.508178278803825, 13.209655852988362, 1378123001, Some(24.0)),
+    TrackPoint(52.50816285610199, 13.209633054211736, 1378123007, Some(24.0))
   )
 
   val expectedResultsSwimmingFile = List(
-    TrackPoint(52.509451,13.209473,36.0,1374327451, Seq.empty),
-    TrackPoint(52.509423,13.209413,36.0,1374327483, Seq.empty),
-    TrackPoint(52.509328,13.209443,35.4,1374328749, Seq.empty),
-    TrackPoint(52.509415,13.209395,34.9,1374328786, Seq.empty)
+    TrackPoint(52.509451,13.209473,1374327451,Some(36.0)),
+    TrackPoint(52.509423,13.209413,1374327483,Some(36.0)),
+    TrackPoint(52.509328,13.209443,1374328749,Some(35.4)),
+    TrackPoint(52.509415,13.209395,1374328786,Some(34.9))
   )
 
   val expectedResultsGpxWithAccelerationData = List(
-    TrackPoint(52.4323181994,13.1817903835,45.85,1470655045,List(
+    TrackPoint(52.4323181994,13.1817903835,1470655045, Some(45.85), accelerometer = List(
       Accelerometer(-0.1,0.0,-1.0,17), Accelerometer(-0.1,0.0,-1.0,117), Accelerometer(-0.2,0.0,-1.0,217),
       Accelerometer(-0.3,-0.2,-1.1,317), Accelerometer(-0.2,-0.2,-1.0,417), Accelerometer(-0.1,-0.1,-1.1,517),
       Accelerometer(-0.1,-0.1,-1.1,617), Accelerometer(0.0,-0.1,-1.1,717), Accelerometer(0.0,-0.1,-1.1,817),
       Accelerometer(0.0,-0.1,-1.0,917))
     ),
-    TrackPoint(52.4323181156,13.1817902997,45.85,1470655046,List(
+    TrackPoint(52.4323181156,13.1817902997,1470655046, Some(45.85), accelerometer = List(
       Accelerometer(0.0,-0.1,-1.0,49), Accelerometer(0.0,-0.1,-1.0,149), Accelerometer(0.0,-0.1,-1.0,249),
       Accelerometer(0.0,-0.1,-1.0,349), Accelerometer(-0.1,-0.1,-1.0,449), Accelerometer(-0.1,-0.1,-1.0,553),
       Accelerometer(-0.1,-0.1,-1.0,652), Accelerometer(-0.1,-0.1,-1.0,752), Accelerometer(-0.1,-0.1,-1.0,852),
       Accelerometer(-0.1,-0.1,-1.0,952))
     ),
-    TrackPoint(52.4323181156,13.1817902159,45.85,1470655047,List(
+    TrackPoint(52.4323181156,13.1817902159,1470655047,Some(45.85), accelerometer = List(
       Accelerometer(-0.1,-0.1,-1.0,24), Accelerometer(-0.1,-0.1,-1.0,124), Accelerometer(-0.1,-0.1,-1.0,224),
       Accelerometer(0.0,-0.1,-1.0,324), Accelerometer(0.0,-0.1,-1.0,424), Accelerometer(0.0,-0.1,-1.0,524),
       Accelerometer(0.0,-0.1,-1.0,624), Accelerometer(0.0,-0.1,-1.0,724), Accelerometer(0.0,-0.1,-1.0,824),
       Accelerometer(-0.1,-0.1,-1.0,924))
     ),
-    TrackPoint(52.4323180318,13.1817901321,45.85,1470655048,List(
+    TrackPoint(52.4323180318,13.1817901321,1470655048,Some(45.85), accelerometer = List(
       Accelerometer(-0.1,0.0,-1.0,55), Accelerometer(-0.1,-0.1,-1.0,155), Accelerometer(-0.1,-0.1,-1.0,255),
       Accelerometer(-0.1,0.0,-1.1,355), Accelerometer(0.0,0.0,-1.1,455), Accelerometer(0.0,-0.1,-1.1,555),
       Accelerometer(0.0,-0.1,-1.0,655), Accelerometer(0.0,-0.1,-1.0,755), Accelerometer(0.0,-0.1,-1.0,855),
