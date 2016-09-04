@@ -15,15 +15,6 @@ trait XmlBasedParser {
     }
   }
 
-  def whenDefinedNoneEmptySeq(parameter: NodeSeq): Option[NodeSeq] = {
-    if (parameter.isEmpty) {
-      Some(Seq.empty)
-    } else {
-      Some(parameter)
-    }
-  }
-
-
   def getElementsWithNameFromInputStream(ElementName: String, is: InputStream): Iterator[Elem] = {
     val trkptSplitter = XmlStreamElementProcessor.collectElements(_.lastOption.contains(ElementName))
     import XmlStreamElementProcessor.IteratorCreator._

@@ -6,7 +6,8 @@ object MultiFormatParser {
   val parserForExtension = Map(
     "gpx" -> GpxParser,
     "tcx" -> TcxParser,
-    "fit" -> FitParser
+    "fit" -> FitParser,
+    "cgps" -> CustomFormatParser
   )
 
   def parse(file: File): Iterator[TrackPoint] = {

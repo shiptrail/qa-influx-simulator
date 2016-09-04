@@ -12,8 +12,10 @@ class Conf(arguments: Seq[String]) extends ScallopConf(arguments) {
   val name = BuildInfo.name
   val buildVersion = BuildInfo.version
   val maintainer = BuildInfo.maintainer
+  val supportedExportFormats = GpsTrackWriter.supportedFormats.mkString(" ")
   version(s"$name $buildVersion - (C) $maintainer")
-  banner("""Usage: insi [OPTION]... [FILE]
+  banner(
+    """Usage: insi [OPTION]... [FILE]
       |
       |insi is designed to simulate gps data logger clients mounted on boats. It does
       |so by either generating pseudo random data (for load testing) or replaying and
@@ -33,7 +35,7 @@ class Conf(arguments: Seq[String]) extends ScallopConf(arguments) {
       |
       |Replay File
       |   The simulator reads a file and replays it with a fresh ID. Supported file
-      |   types are GPX, TCX and FIT.
+      |   types are GPX, TCX, FIT and CGPS.
       |
       |Benchmark output
       |   Gatling prints some information about te progress of the simulation and
@@ -54,8 +56,11 @@ class Conf(arguments: Seq[String]) extends ScallopConf(arguments) {
   val batchSize = optWithDefault[Int](
     descr = "number of location updates in one data batch",
     default = 10)
+  val dumpFileFormat = opt[String](
+    descr = "instead of sending data to the backend write trail data to stdout in a file format of your choice. " +
+      s"(supported: ${supportedExportFormats}) Note: all other options except file are ignored")
   val file: ScallopOption[File] = trailArg[File](
-    descr = "path to a GPX, TCX or FIT file",
+    descr = "path to a GPX, TCX, FIT or CGPS file",
     required = false
   )
 
@@ -77,12 +82,28 @@ class Conf(arguments: Seq[String]) extends ScallopConf(arguments) {
 object Main extends App {
 
   val conf: Conf = new Conf(args)
+  val fileName = conf.file.toOption
+  val dumpFileFormat = conf.dumpFileFormat.toOption
 
-  val simulation = conf.file.toOption match {
-    case Some(fileName) => fileBased()
-    case None => randomBased()
+  if (dumpFileFormat.isDefined) {
+    val format = dumpFileFormat.get
+    val source = fileName match {
+      case Some(fileName) => {
+        MultiFormatParser.parse(fileName)
+      }
+      case None => {
+        System.err.println("Error: dumping random data is not supported!")
+        Iterator.empty
+      }
+    }
+    GpsTrackWriter.from(source).to(format) foreach println
+  } else {
+    val simulation = fileName match {
+      case Some(fileName) => fileBased()
+      case None => randomBased()
+    }
+    Gatling.fromArgs(Array(), simulation)
   }
-  Gatling.fromArgs(Array(), simulation)
 
   def fileBased() =
     Some(classOf[MainSendFileBasedClientUpdates])
@@ -93,7 +114,7 @@ object Main extends App {
       .asInstanceOf[SelectedSimulationClass]
 
   class MainSendFileBasedClientUpdates
-      extends SendFileBasedClientUpdates(Main.conf)
+    extends SendFileBasedClientUpdates(Main.conf)
 
   class MainSendRandomClientUpdates extends SendRandomClientUpdates(Main.conf)
 }
