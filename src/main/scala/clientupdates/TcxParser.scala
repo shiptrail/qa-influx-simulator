@@ -11,6 +11,6 @@ object TcxParser extends GpsTrackParser with XmlBasedParser {
       lng <- whenDefined(xmlNode \ "Position" \ "LongitudeDegrees").flatMap(StringUtils.toDouble)
       time <- whenDefined(xmlNode \ "Time").flatMap(StringUtils.toUnixTime)
       ele = whenDefined(xmlNode \ "AltitudeMeters").flatMap(StringUtils.toDouble).getOrElse(0.0)
-    } yield TrackPoint(lat, lng, ele, time, Seq.empty)
+    } yield TrackPoint(lat, lng, time, Some(ele))
   }
 }

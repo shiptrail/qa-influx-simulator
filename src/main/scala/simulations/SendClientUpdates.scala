@@ -2,14 +2,14 @@ package simulations
 
 import java.util.UUID
 
-import clientupdates.{ClientUpdate, Conf}
+import clientupdates.{Conf, TrackPoint}
 import io.gatling.core.Predef._
 import io.gatling.core.scenario.Simulation
 import io.gatling.http.Predef._
 import io.gatling.http.request.builder.HttpRequestBuilder
 import play.api.libs.json.Json
 
-class SendClientUpdates(conf: Conf)(clientUpdates: Seq[ClientUpdate])
+class SendClientUpdates(conf: Conf)(clientUpdates: Seq[TrackPoint])
     extends Simulation {
   require(conf != null)
 
@@ -28,7 +28,7 @@ class SendClientUpdates(conf: Conf)(clientUpdates: Seq[ClientUpdate])
     session.set("currentBatch",
                 Json.toJson(
                     session("updates")
-                      .as[Iterator[ClientUpdate]]
+                      .as[Iterator[TrackPoint]]
                       .take(conf.batchSize())
                       .toList))
   }).exec(request)
