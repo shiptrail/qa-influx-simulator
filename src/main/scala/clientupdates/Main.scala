@@ -59,6 +59,9 @@ class Conf(arguments: Seq[String]) extends ScallopConf(arguments) {
   val dumpFileFormat = opt[String](
     descr = "instead of sending data to the backend write trail data to stdout in a file format of your choice. " +
       s"(supported: ${supportedExportFormats}) Note: all other options except file are ignored")
+  val extractEvents = opt[Boolean](
+    descr = "instead of sending data to the backend write event data to stdout " +
+      "Note: all other options except file are ignored")
   val file: ScallopOption[File] = trailArg[File](
     descr = "path to a GPX, TCX, FIT or CGPS file",
     required = false
@@ -82,22 +85,19 @@ class Conf(arguments: Seq[String]) extends ScallopConf(arguments) {
 object Main extends App {
 
   val conf: Conf = new Conf(args)
-  val fileName = conf.file.toOption
+  val fileName: Option[File] = conf.file.toOption
   val dumpFileFormat = conf.dumpFileFormat.toOption
+  val extractEvents = conf.extractEvents.toOption.getOrElse(false)
 
   if (dumpFileFormat.isDefined) {
     val format = dumpFileFormat.get
-    val source = fileName match {
-      case Some(fileName) => {
-        MultiFormatParser.parse(fileName)
-      }
-      case None => {
-        System.err.println("Error: dumping random data is not supported!")
-        Iterator.empty
-      }
-    }
+    val source = getFileNameAsSource(fileName)
     GpsTrackWriter.from(source).to(format) foreach println
-  } else {
+  } else if (extractEvents) {
+    val source = getFileNameAsSource(fileName)
+    GpsEventWriter.from(source).toTrackPointStrings foreach println
+  }
+  else {
     val simulation = fileName match {
       case Some(fileName) => fileBased()
       case None => randomBased()
@@ -113,8 +113,21 @@ object Main extends App {
     Some(classOf[MainSendRandomClientUpdates])
       .asInstanceOf[SelectedSimulationClass]
 
+  def getFileNameAsSource(fileName: Option[File]): Iterator[TrackPoint] = {
+    fileName match {
+      case Some(fileName) => {
+        MultiFormatParser.parse(fileName)
+      }
+      case None => {
+        System.err.println("Error: dumping random data is not supported!")
+        Iterator.empty
+      }
+    }
+  }
+
   class MainSendFileBasedClientUpdates
     extends SendFileBasedClientUpdates(Main.conf)
 
   class MainSendRandomClientUpdates extends SendRandomClientUpdates(Main.conf)
+
 }
